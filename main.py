@@ -1,5 +1,5 @@
-//  Drawing player
-let Spaceship = sprites.create(img`
+# Drawing player
+Spaceship = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -16,9 +16,10 @@ let Spaceship = sprites.create(img`
             . . . . . . f f f f . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Player)
-Spaceship.setPosition(80, 105)
-scene.setBackgroundImage(img`
+    """),
+    SpriteKind.player)
+Spaceship.set_position(80, 105)
+scene.set_background_image(img("""
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
         fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
         ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -139,12 +140,12 @@ scene.setBackgroundImage(img`
         ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
         ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
         ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-`)
-info.player1.setLife(3)
-//  Controlling the player
-controller.moveSprite(Spaceship, 100, 100)
-controller.A.onEvent(ControllerButtonEvent.Pressed, function on_event_pressed() {
-    let projectile = sprites.createProjectileFromSprite(img`
+"""))
+info.player1.set_life(3)
+# Controlling the player
+controller.move_sprite(Spaceship, 100, 100)
+def on_event_pressed():
+    projectile = sprites.create_projectile_from_sprite(img("""
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
@@ -161,10 +162,10 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function on_event_pressed() 
     . . . . 2 . . . . . . 2 . . . .
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
-    `, Spaceship, 0, -200)
-})
-//  Drawing the enemy
-let Asteroid = sprites.create(img`
+    """), Spaceship, 0, -200)
+controller.A.on_event(ControllerButtonEvent.PRESSED, on_event_pressed)
+# Drawing the enemy
+Asteroid = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . . . . . c c c c c c . . . . 
             . . . . . . c b b b b c . . . . 
@@ -181,24 +182,25 @@ let Asteroid = sprites.create(img`
             . . . c c c c c c . . c c c c . 
             . . . c c c c . . . . . . . . . 
             . . . . . . . . . . . . . . . .
-    `, SpriteKind.Enemy)
-Asteroid.setPosition(80, 15)
-Asteroid.setVelocity(0, 50)
-// Losing life
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_overlap(sprite: Sprite, othersprite: Sprite) {
-    info.changeLifeBy(-1)
-})
-info.onLifeZero(function on_life_zero() {
+    """),
+    SpriteKind.enemy)
+Asteroid.set_position(80, 15)
+Asteroid.set_velocity(0, 50)
+#Losing life
+def on_overlap(sprite, othersprite):
+    info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_overlap)
+def on_life_zero():
     game.over()
-})
-// Killing the Asteroid
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function on_overlap2(sprite: Sprite, otherSprite: Sprite) {
+info.on_life_zero(on_life_zero)
+#Killing the Asteroid
+def on_overlap2(sprite, otherSprite):
     Asteroid.destroy()
-})
-sprites.onDestroyed(SpriteKind.Enemy, function on_destroyed(sprite: Sprite) {
-    info.changeScoreBy(1)
-})
-// Random Asteroid spawn
-game.onUpdateInterval(500, function on_update_interval() {
-    Asteroid.setPosition(randint(5, 155), 15)
-})
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.enemy, on_overlap2)
+def on_destroyed(sprite):
+    info.change_score_by(1)
+sprites.on_destroyed(SpriteKind.enemy, on_destroyed)
+#Random Asteroid spawn
+def on_update_interval():
+    Asteroid.set_position(randint(5, 155), 15)
+game.on_update_interval(500, on_update_interval)
